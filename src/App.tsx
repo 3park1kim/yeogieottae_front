@@ -1,32 +1,22 @@
 import "./App.css";
-
-const { Kakao } = window;
-
-declare global {
-  interface Window {
-    Kakao: any;
-  }
-}
+import { Route, Routes, BrowserRouter } from "react-router-dom";
+import Login from "./pages/Login";
+import BaseLayout from "./pages/BaseLayout";
 
 function App() {
-  const loginWithKakao = () => {
-    Kakao.Auth.authorize({
-      redirectUri: 'http://localhost:3000',
-    })
-  }
-
   return (
     <div className="App">
-      <a id="custom-login-btn" onClick={loginWithKakao}>
-        <img
-          src="//k.kakaocdn.net/14/dn/btroDszwNrM/I6efHub1SN5KCJqLm1Ovx1/o.jpg"
-          width="222"
-          alt="카카오 로그인 버튼"
-        />
-      </a>
+      <BrowserRouter>
+        <Routes>
+          <Route path={`${process.env.PUBLIC_URL}/login`} element={<Login />} />
+          <Route
+            path={`${process.env.PUBLIC_URL}/*`}
+            element={<BaseLayout />}
+          />
+        </Routes>
+      </BrowserRouter>
     </div>
-  )
-
+  );
 }
 
 export default App;
