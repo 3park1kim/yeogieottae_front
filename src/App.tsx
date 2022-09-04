@@ -5,17 +5,12 @@ import BaseLayout from "./pages/BaseLayout";
 
 function App() {
   return (
-    <div className="App">
-      <BrowserRouter>
-        <Routes>
-          <Route path={`${process.env.PUBLIC_URL}/login`} element={<Login />} />
-          <Route
-            path={`${process.env.PUBLIC_URL}/*`}
-            element={<BaseLayout />}
-          />
-        </Routes>
-      </BrowserRouter>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path={`${process.env.PUBLIC_URL}/login`} element={<Login />} />
+        <Route path={`${process.env.PUBLIC_URL}/*`} element={<BaseLayout />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
