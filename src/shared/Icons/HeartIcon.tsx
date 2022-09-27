@@ -4,13 +4,15 @@ export interface IProps {
   stroke?: string;
   width?: string | number | undefined;
   height?: string | number | undefined;
+  classes?: string;
 }
-const HeartIcon: React.FC<IProps> = ({ stroke, width, height }) => {
+const HeartIcon: React.FC<IProps> = ({ stroke, width, height, classes }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width={width}
       height={height}
+      className={classes}
       viewBox="0 0 31.64 30.86"
     >
       <title>자산 5</title>
