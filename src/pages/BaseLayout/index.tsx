@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import HeartIcon from "../../shared/Icons/HeartIcon";
+import Home from "../Home";
 import Mate from "../Mate";
 import "./index.scss";
 const dummyDetail = [
@@ -75,7 +76,7 @@ const BaseLayout = () => {
       <Routes>
         <Route
           path={`${process.env.PUBLIC_URL}/home`}
-          element={<div>home</div>}
+          element={<Home />}
         />
         <Route path={`${process.env.PUBLIC_URL}/mate/*`} element={<Mate />} />
         <Route path={`${process.env.PUBLIC_URL}/me`} element={<div>Me</div>} />
