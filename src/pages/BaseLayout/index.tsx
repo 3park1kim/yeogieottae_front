@@ -3,6 +3,8 @@ import { Route, Routes, useNavigate } from "react-router-dom";
 import HeartIcon from "../../shared/Icons/HeartIcon";
 import Mate from "../Mate";
 import "./index.scss";
+import Modal from "react-modal";
+
 const dummyDetail = [
   { id: 1, title: "연남동", desc: "", color: "red", places: [], member: [] },
   {
@@ -16,13 +18,22 @@ const dummyDetail = [
 ];
 
 const BaseLayout = () => {
+  const plusIcon = require("../../shared/Icons/Plus.jpg");
+
   const [menu, changeMenu] = useState("home");
+  const [openCreateMateModal, toggleCreateMateModal] = useState(false);
+
   const navigate = useNavigate();
   useEffect(() => {
     navigate(menu);
   }, [menu]);
   return (
     <div className="layout">
+      {openCreateMateModal && (
+        <Modal isOpen={openCreateMateModal} className={"createMateModal"}>
+          gd
+        </Modal>
+      )}
       <div className="side">
         <div className="side-top">
           상단
@@ -34,37 +45,35 @@ const BaseLayout = () => {
           {menu === "/mate" &&
             (window.location.href.split("/").pop() === "mate" ? (
               <>
-                <div
-                  className="mate-sidemenu"
-                  onClick={() => navigate("/mate/1")}
-                >
-                  <HeartIcon
-                    width={20}
-                    height={20}
-                    stroke={"red"}
-                    classes="mate-sidemenu--heart"
-                  />
-                  <div>
-                    <div className="mate-sidemenu--name">연남동</div>
-                    <div>0개</div>
+                {dummyDetail.map((item) => (
+                  <div
+                    className="mate-sidemenu"
+                    onClick={() => navigate(`/mate/${item.id}`)}
+                  >
+                    <HeartIcon
+                      width={20}
+                      height={20}
+                      stroke={item.color}
+                      classes="mate-sidemenu--heart"
+                    />
+                    <div>
+                      <div className="mate-sidemenu--name">{item.title}</div>
+                      <div>{item.places.length}개</div>
+                    </div>
+                    <button className="mate-sidemenu--button"></button>
                   </div>
-                  <button className="mate-sidemenu--button"></button>
-                </div>
+                ))}
                 <div
                   className="mate-sidemenu"
-                  onClick={() => navigate("/mate/2")}
+                  onClick={() => toggleCreateMateModal(true)}
                 >
-                  <HeartIcon
-                    width={20}
-                    height={20}
-                    stroke={"blue"}
-                    classes="mate-sidemenu--heart"
+                  <img
+                    src={plusIcon}
+                    className="mate-sidemenu--heart"
+                    style={{ width: "25px", height: "25px" }}
+                    alt={"plus"}
                   />
-                  <div>
-                    <div className="mate-sidemenu--name">상암동 맛집</div>
-                    <div>0개</div>
-                  </div>{" "}
-                  <button className="mate-sidemenu--button"></button>
+                  <div className="mate-sidemenu--name">메이트 추가</div>
                 </div>
               </>
             ) : (
