@@ -6,11 +6,11 @@ import loginSession from "../reducers/loginStore";
 export function useLoginActions(): any {
   const loginState = useRootState((state) => state.loginStore);
 
-  const dispatch2 = useAppDispatch();
+  const dispatch = useAppDispatch();
 
   const boundLoginSession = useMemo(
-    () => bindActionCreators(loginSession, dispatch2),
-    [dispatch2]
+    () => bindActionCreators(loginSession, dispatch),
+    [dispatch]
   );
 
   return {
