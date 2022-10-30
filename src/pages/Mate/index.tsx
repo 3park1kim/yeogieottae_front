@@ -1,7 +1,6 @@
 import React from "react";
 import styled from "@emotion/styled";
 import Map from "../../components/Map";
-import Picker from "../../components/Picker";
 
 const Base = styled.div`
   overflow: hidden;
