@@ -3,7 +3,7 @@ const { Kakao } = window;
 const Login: React.FC = () => {
   const loginWithKakao = () => {
     Kakao.Auth.authorize({
-      redirectUri: "http://localhost:3000/login",
+      redirectUri: "http://localhost:8080/login/oauth2/code/kakao",
     });
   };
   return (

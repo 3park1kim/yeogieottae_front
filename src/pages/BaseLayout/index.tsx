@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
+import SearchBar from "../../components/SearchBar";
 import HeartIcon from "../../shared/Icons/HeartIcon";
 import Home from "../Home";
 import Mate from "../Mate";
@@ -30,6 +31,7 @@ const BaseLayout = () => {
           <button onClick={() => changeMenu("/home")}>홈</button>
           <button onClick={() => changeMenu("/mate")}>메이트</button>
           <button onClick={() => changeMenu("/me")}>나</button>
+          <SearchBar />
         </div>
         <div className="side-bottom">
           {menu === "/mate" &&
@@ -74,10 +76,7 @@ const BaseLayout = () => {
         </div>
       </div>
       <Routes>
-        <Route
-          path={`${process.env.PUBLIC_URL}/home`}
-          element={<Home />}
-        />
+        <Route path={`${process.env.PUBLIC_URL}/home`} element={<Home />} />
         <Route path={`${process.env.PUBLIC_URL}/mate/*`} element={<Mate />} />
         <Route path={`${process.env.PUBLIC_URL}/me`} element={<div>Me</div>} />
         <Route path={`${process.env.PUBLIC_URL}/*`} element={<div>바디</div>} />
