@@ -1,6 +1,6 @@
 export type Mark = {
-  placeId: number;
+  placeId?: number;
   name: string;
-  latitude: number;
-  longitude: number;
+  latitude?: number;
+  longitude?: number;
 };

@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import PlaceList from "../../components/PlaceList";
 import SearchBar from "../../components/SearchBar";
+import useLocalStorage from "../../modules/hooks/useLocalStorage";
 import HeartIcon from "../../shared/Icons/HeartIcon";
+import { LOCAL_STORAGE_RECENT_SEARCH } from "../../shared/utils/storageKey";
 import Home from "../Home";
 import Mate from "../Mate";
 import "./index.scss";
@@ -36,6 +38,10 @@ const dummyPlaces = [
 const BaseLayout = () => {
   const [menu, changeMenu] = useState("/home");
   const navigate = useNavigate();
+  const [recentKeywords, setRecentKeywords] = useLocalStorage(
+    LOCAL_STORAGE_RECENT_SEARCH,
+    []
+  );
   useEffect(() => {
     navigate(menu);
   }, [menu]);
@@ -48,12 +54,19 @@ const BaseLayout = () => {
           <button onClick={() => changeMenu("/home")}>홈</button>
           <button onClick={() => changeMenu("/mate")}>메이트</button>
           <button onClick={() => changeMenu("/me")}>나</button>
-          <SearchBar />
+          <SearchBar
+            recentKeywords={recentKeywords}
+            setRecentKeywords={setRecentKeywords}
+          />
         </div>
         <div className="side-bottom">
           {menu === "/home" &&
             window.location.href.split("/").pop() === "home" && (
-              <PlaceList data={dummyPlaces} />
+              <PlaceList
+                data={dummyPlaces}
+                recentKeywords={recentKeywords}
+                setRecentKeywords={setRecentKeywords}
+              />
             )}
           {menu === "/mate" &&
             (window.location.href.split("/").pop() === "mate" ? (

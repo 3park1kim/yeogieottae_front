@@ -1,74 +1,29 @@
 import React, { useCallback, useState } from "react";
 import SearchIcon from "../../shared/Icons/SearchIcon";
-import styled from "@emotion/styled";
-import useLocalStorage from "../../modules/hooks/useLocalStorage";
-import { LOCAL_STORAGE_RECENT_KEYWORDS } from "../../shared/utils/storageKey";
+import { Mark } from "../../types/MarkDto";
 import useComponentVisible from "../../modules/hooks/useComponentVisible";
+import {
+  IconWrapper,
+  KeywordDropdown,
+  KeywordItem,
+  KeywordsDropdownWrapper,
+  KeywordTxt,
+  SearchBarContainer,
+  SearchBarWrapper,
+  SearchIconWrapper,
+  SearchInput,
+} from "./styles";
+import PinIcon from "../../shared/Icons/PinIcon";
+import DeleteIcon from "../../shared/Icons/DeleteIcon";
 
-const SearchBarContainer = styled.div`
-  position: relative;
-  z-index: 1000;
-`;
-
-const SearchBarWrapper = styled.div`
-  display: flex;
-  justify-content: left;
-  align-items: center;
-  width: 95%;
-  height: 40px;
-  font-size: 15px;
-  background-color: #f2f2f2;
-  border: 1px solid #f2f2f2;
-  border-radius: 6px;
-  padding: 0 10px;
-  margin-top: 20px;
-`;
-
-const SearchIconWrapper = styled.div``;
-
-const SearchInput = styled.input`
-  margin-left: 10px;
-  border: none;
-  background-color: transparent;
-
-  &:focus {
-    outline: none !important;
-  }
-`;
-
-const KeywordsDropdownWrapper = styled.div`
-  top: 0;
-  margin-top: 10px;
-`;
-
-const KeywordDropdown = styled.div`
-  padding-top: 16px;
-  padding-bottom: 12px;
-  min-height: 100px;
-  border-radius: 0 0 10px 10px;
-  box-shadow: 0 1px 3px rgb(117 83 196 / 10%), 0 0 30px rgb(117 83 196 / 10%);
-  background-color: #fff;
-`;
-
-const KeywordItem = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 5px 15px;
-
-  &:hover {
-    background-color: #f2f2f2;
-  }
-`;
-
-const SearchBar: React.FC = () => {
+interface iProps {
+  recentKeywords: Array<Mark>;
+  setRecentKeywords: (list: any) => void;
+}
+const SearchBar: React.FC<iProps> = ({ recentKeywords, setRecentKeywords }) => {
   const [keyword, setKeyword] = useState<string>("");
   const [dropdownRef, showRecentKeywords, setShowRecentKey] =
-    useComponentVisible(false);
-  const [recentKeywords, setRecentKeywords] = useLocalStorage(
-    LOCAL_STORAGE_RECENT_KEYWORDS,
-    []
-  );
+    useComponentVisible(true);
 
   const onChangeKeyword = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -83,19 +38,24 @@ const SearchBar: React.FC = () => {
         const value = e.currentTarget.value;
         if (!value) return;
         let list = [...recentKeywords];
-        const i = recentKeywords.indexOf(value);
-        if (i > -1) {
-          list.splice(i, 1);
-        }
-
-        setRecentKeywords([value, ...list]);
+        list = list.filter((i) => (!i.placeId && i.name) !== value);
+        setRecentKeywords([{ name: value }, ...list]);
         setKeyword("");
       }
     },
     [recentKeywords, setRecentKeywords]
   );
 
-  const onHandleClick = useCallback(
+  const onHandleClickDeleteBtn = useCallback(
+    (key: number) => {
+      let list: Array<Mark> = [...recentKeywords];
+      list.splice(key, 1);
+      setRecentKeywords(list);
+    },
+    [recentKeywords, setRecentKeywords]
+  );
+
+  const onHandleClickInput = useCallback(
     (e: React.MouseEvent) => {
       setShowRecentKey(true);
     },
@@ -106,12 +66,7 @@ const SearchBar: React.FC = () => {
     <SearchBarContainer>
       <SearchBarWrapper>
         <SearchIconWrapper>
-          <SearchIcon
-            width={20}
-            height={20}
-            stroke={"gray"}
-            classes="home-searchmenu--search"
-          />
+          <SearchIcon width={20} height={20} stroke={"gray"} />
         </SearchIconWrapper>
         <SearchInput
           id="search_filter"
@@ -120,15 +75,27 @@ const SearchBar: React.FC = () => {
           value={keyword}
           onChange={(e) => onChangeKeyword(e)}
           onKeyUp={(e) => onHandleKeyUp(e)}
-          onClick={(e) => onHandleClick(e)}
+          onClick={(e) => onHandleClickInput(e)}
           autoComplete="off"
         />
       </SearchBarWrapper>
       {showRecentKeywords && (
         <KeywordsDropdownWrapper ref={dropdownRef}>
           <KeywordDropdown>
-            {recentKeywords.map((item: string, key: number) => (
-              <KeywordItem key={`keyword-item-${key}`}>{item}</KeywordItem>
+            {recentKeywords.map((item: Mark, key: number) => (
+              <KeywordItem key={`keyword-item-${key}`}>
+                <IconWrapper marginRight={"10px"}>
+                  {item?.placeId ? (
+                    <PinIcon width={18} height={18} stroke={"gray"} />
+                  ) : (
+                    <SearchIcon width={18} height={18} stroke={"gray"} />
+                  )}
+                </IconWrapper>
+                <KeywordTxt>{item.name}</KeywordTxt>
+                <IconWrapper onClick={() => onHandleClickDeleteBtn(key)}>
+                  <DeleteIcon width={18} height={18} stroke={"gray"} />
+                </IconWrapper>
+              </KeywordItem>
             ))}
           </KeywordDropdown>
         </KeywordsDropdownWrapper>
