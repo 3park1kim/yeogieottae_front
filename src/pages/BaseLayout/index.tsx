@@ -24,12 +24,18 @@ const dummyPlaces = [
   {
     placeId: 1,
     name: "뚜비집",
+    addressName: "경기도 고양시 덕양구",
+    groupName: "요기어때",
+    placeType: "우리집",
     latitude: 37.4923615,
     longitude: 127.02928809999999,
   },
   {
     placeId: 2,
     name: "마포만두",
+    addressName: "서울 마포구 상암동",
+    groupName: "3Park1Kim",
+    placeType: "식당",
     latitude: 37.5761986,
     longitude: 126.90000479999999,
   },

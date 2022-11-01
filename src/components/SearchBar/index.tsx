@@ -23,7 +23,7 @@ interface iProps {
 const SearchBar: React.FC<iProps> = ({ recentKeywords, setRecentKeywords }) => {
   const [keyword, setKeyword] = useState<string>("");
   const [dropdownRef, showRecentKeywords, setShowRecentKey] =
-    useComponentVisible(true);
+    useComponentVisible(false);
 
   const onChangeKeyword = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>): void => {
