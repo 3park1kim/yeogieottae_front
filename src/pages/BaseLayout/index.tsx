@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
+import PlaceList from "../../components/PlaceList";
 import SearchBar from "../../components/SearchBar";
 import HeartIcon from "../../shared/Icons/HeartIcon";
 import Home from "../Home";
@@ -17,12 +18,28 @@ const dummyDetail = [
   },
 ];
 
+const dummyPlaces = [
+  {
+    placeId: 1,
+    name: "뚜비집",
+    latitude: 37.4923615,
+    longitude: 127.02928809999999,
+  },
+  {
+    placeId: 2,
+    name: "마포만두",
+    latitude: 37.5761986,
+    longitude: 126.90000479999999,
+  },
+];
+
 const BaseLayout = () => {
-  const [menu, changeMenu] = useState("home");
+  const [menu, changeMenu] = useState("/home");
   const navigate = useNavigate();
   useEffect(() => {
     navigate(menu);
   }, [menu]);
+
   return (
     <div className="layout">
       <div className="side">
@@ -34,6 +51,10 @@ const BaseLayout = () => {
           <SearchBar />
         </div>
         <div className="side-bottom">
+          {menu === "/home" &&
+            window.location.href.split("/").pop() === "home" && (
+              <PlaceList data={dummyPlaces} />
+            )}
           {menu === "/mate" &&
             (window.location.href.split("/").pop() === "mate" ? (
               <>
@@ -76,7 +97,10 @@ const BaseLayout = () => {
         </div>
       </div>
       <Routes>
-        <Route path={`${process.env.PUBLIC_URL}/home`} element={<Home />} />
+        <Route
+          path={`${process.env.PUBLIC_URL}/home`}
+          element={<Home data={dummyPlaces} />}
+        />
         <Route path={`${process.env.PUBLIC_URL}/mate/*`} element={<Mate />} />
         <Route path={`${process.env.PUBLIC_URL}/me`} element={<div>Me</div>} />
         <Route path={`${process.env.PUBLIC_URL}/*`} element={<div>바디</div>} />

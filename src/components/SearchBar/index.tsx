@@ -1,9 +1,14 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import SearchIcon from "../../shared/Icons/SearchIcon";
 import styled from "@emotion/styled";
 import useLocalStorage from "../../modules/hooks/useLocalStorage";
 import { LOCAL_STORAGE_RECENT_KEYWORDS } from "../../shared/utils/storageKey";
 import useComponentVisible from "../../modules/hooks/useComponentVisible";
+
+const SearchBarContainer = styled.div`
+  position: relative;
+  z-index: 1000;
+`;
 
 const SearchBarWrapper = styled.div`
   display: flex;
@@ -25,6 +30,10 @@ const SearchInput = styled.input`
   margin-left: 10px;
   border: none;
   background-color: transparent;
+
+  &:focus {
+    outline: none !important;
+  }
 `;
 
 const KeywordsDropdownWrapper = styled.div`
@@ -52,7 +61,7 @@ const KeywordItem = styled.div`
   }
 `;
 
-const SearchBar = () => {
+const SearchBar: React.FC = () => {
   const [keyword, setKeyword] = useState<string>("");
   const [dropdownRef, showRecentKeywords, setShowRecentKey] =
     useComponentVisible(false);
@@ -60,7 +69,7 @@ const SearchBar = () => {
     LOCAL_STORAGE_RECENT_KEYWORDS,
     []
   );
-  console.log(showRecentKeywords);
+
   const onChangeKeyword = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>): void => {
       setKeyword(e.target.value);
@@ -94,7 +103,7 @@ const SearchBar = () => {
   );
 
   return (
-    <>
+    <SearchBarContainer>
       <SearchBarWrapper>
         <SearchIconWrapper>
           <SearchIcon
@@ -124,7 +133,7 @@ const SearchBar = () => {
           </KeywordDropdown>
         </KeywordsDropdownWrapper>
       )}
-    </>
+    </SearchBarContainer>
   );
 };
 

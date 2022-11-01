@@ -1,33 +1,43 @@
-import React, { useEffect, useRef } from 'react'
-import styled from "@emotion/styled"
+import React, { useEffect, useRef } from "react";
+import styled from "@emotion/styled";
+import { Mark } from "../../types/MarkDto";
 
 const { kakao } = window;
 
-interface MapProps {
-    latitude: number | undefined;
-    longitude: number | undefined;
-}
+// interface MapProps {
+//   latitude: number | undefined;
+//   longitude: number | undefined;
+// }
 
 const options = {
-    center: new kakao.maps.LatLng(33.450701, 126.570667),
-    level: 3,
+  center: new kakao.maps.LatLng(37.4923615, 127.02928809999999),
+  level: 10,
 };
 
 const MapContainer = styled.div`
-    width: 100%;
-    height: 100%;
-`
+  width: 100%;
+  height: 100%;
+`;
 
-const Map: React.FC<MapProps> = ({ latitude, longitude }) => {
-    const mapRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        new kakao.maps.Map(mapRef.current, options);
-    }, []);
-
-    return (
-        <MapContainer id="map" ref={mapRef} />
-    )
+interface Props {
+  data: Array<Mark>;
 }
+const Map: React.FC<Props> = ({ data }) => {
+  const mapRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const map = new kakao.maps.Map(mapRef.current, options);
+
+    data.forEach((item) => {
+      let markerPosition = new kakao.maps.LatLng(item.latitude, item.longitude);
+      let marker = new kakao.maps.Marker({
+        position: markerPosition,
+      });
+      marker.setMap(map);
+    });
+  }, [data]);
+
+  return <MapContainer id="map" ref={mapRef} />;
+};
 
 export default Map;
