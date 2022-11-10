@@ -5,6 +5,8 @@ import Mate from "../Mate";
 import "./index.scss";
 import Modal from "react-modal";
 import { GithubPicker } from "react-color";
+import qs from "qs";
+const { Kakao } = window;
 
 const dummyDetail = [
   { id: 1, title: "연남동", desc: "", color: "red", places: [], member: [] },
@@ -29,8 +31,38 @@ const BaseLayout = () => {
 
   const navigate = useNavigate();
   useEffect(() => {
+    if (!window.localStorage.getItem("token")) {
+      let params = new URLSearchParams(document.location.search);
+      let code = params.get("code");
+      getToken(code ?? "");
+    }
+
     navigate(menu);
   }, [menu]);
+
+  const getToken = async (code: string) => {
+    try {
+      await fetch("https://kauth.kakao.com/oauth/token", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
+        },
+        body: qs.stringify({
+          grant_type: "authorization_code",
+          client_id: process.env.REACT_APP_KAKAO_API_KEY,
+          redirect_uri: "http://localhost:3000",
+          code: code,
+        }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          Kakao.Auth.setAccessToken(data.access_token);
+          window.localStorage.setItem("token", data.access_token);
+        });
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   return (
     <div className="layout">
@@ -93,7 +125,7 @@ const BaseLayout = () => {
       <div className="side">
         <div className="side-top">
           상단
-          <button onClick={() => changeMenu("/home")}>홈</button>
+          <button onClick={() => changeMenu("/")}>홈</button>
           <button onClick={() => changeMenu("/mate")}>메이트</button>
           <button onClick={() => changeMenu("/me")}>나</button>
         </div>
@@ -138,10 +170,7 @@ const BaseLayout = () => {
         </div>
       </div>
       <Routes>
-        <Route
-          path={`${process.env.PUBLIC_URL}/home`}
-          element={<div>home</div>}
-        />
+        <Route path={`${process.env.PUBLIC_URL}`} element={<div>home</div>} />
         <Route path={`${process.env.PUBLIC_URL}/mate/*`} element={<Mate />} />
         <Route path={`${process.env.PUBLIC_URL}/me`} element={<div>Me</div>} />
         <Route path={`${process.env.PUBLIC_URL}/*`} element={<div>바디</div>} />

@@ -1,11 +1,20 @@
+import { useEffect } from "react";
+
 const { Kakao } = window;
 
 const Login: React.FC = () => {
   const loginWithKakao = () => {
     Kakao.Auth.authorize({
-      redirectUri: "http://localhost:3000/login",
+      redirectUri: "http://localhost:3000",
+      scope: "profile_nickname,friends,profile_image",
+      //grant_type: "authorization_code",
+      serviceTerms: "account_email",
     });
   };
+  useEffect(() => {
+    window.localStorage.removeItem("token");
+  }, []);
+
   return (
     <a id="custom-login-btn" onClick={loginWithKakao}>
       <img

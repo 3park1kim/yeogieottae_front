@@ -1,6 +1,9 @@
 import React from "react";
 import styled from "@emotion/styled";
 import Map from "../../components/Map";
+import Picker from "../../components/Picker";
+import { useNavigate } from "react-router-dom";
+const { kakao } = window;
 
 const Base = styled.div`
   overflow: hidden;
@@ -21,12 +24,16 @@ const Filter = styled.div`
   cursor: pointer;
 `;
 const Mate: React.FC = () => {
+  var token = window.localStorage.getItem("token");
+  const navigate = useNavigate();
+
   return (
     <Base>
       <FilterGroup>
         <Filter>음식점</Filter>
         <Filter>카페</Filter>
       </FilterGroup>
+      {token && <Picker />}
 
       <Map latitude={33} longitude={130} />
     </Base>
