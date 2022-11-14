@@ -41,3 +41,60 @@
     }
   }
 }
+.modal {
+  width: 50%;
+  height: 50%;
+  z-index: 99;
+  background-color: white;
+  position: fixed;
+  top: 20%;
+  left: 23%;
+  padding: 20px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.16);
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  &-title {
+    font-size: 20px;
+    font-weight: 700;
+  }
+  &-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  &-footer {
+    margin-left: auto;
+    margin-top: auto;
+    > * + * {
+      margin-left: 10px;
+    }
+  }
+}
+.createMateModal {
+  flex-direction: column;
+  > * {
+    margin-top: 15px;
+  }
+  &-box {
+    display: flex;
+    align-items: center;
+    .name {
+      width: 150px;
+    }
+    .input {
+      width: 300px;
+      height: 30px;
+      border-radius: 8px;
+      border-width: 1px;
+      padding: 3px;
+      .long {
+        height: 50px !important;
+      }
+    }
+  }
+}
+.ReactModal__Overlay {
+  background-color: rgba(0, 0, 0, 0.6) !important;
+  z-index: 3;
+}
