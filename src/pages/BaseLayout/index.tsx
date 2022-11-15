@@ -11,6 +11,8 @@ import "./index.scss";
 import Modal from "react-modal";
 import { GithubPicker } from "react-color";
 import qs from "qs";
+import { useSelector } from "react-redux";
+import { RootState } from "../../modules/reducers";
 const { Kakao } = window;
 
 const dummyDetail = [
@@ -44,6 +46,114 @@ const dummyPlaces = [
     latitude: 37.5761986,
     longitude: 126.90000479999999,
   },
+  {
+    placeId: 1,
+    name: "뚜비집",
+    addressName: "경기도 고양시 덕양구",
+    groupName: "요기어때",
+    placeType: "우리집",
+    latitude: 37.4923615,
+    longitude: 127.02928809999999,
+  },
+  {
+    placeId: 2,
+    name: "마포만두",
+    addressName: "서울 마포구 상암동",
+    groupName: "3Park1Kim",
+    placeType: "식당",
+    latitude: 37.5761986,
+    longitude: 126.90000479999999,
+  },
+  {
+    placeId: 1,
+    name: "뚜비집",
+    addressName: "경기도 고양시 덕양구",
+    groupName: "요기어때",
+    placeType: "우리집",
+    latitude: 37.4923615,
+    longitude: 127.02928809999999,
+  },
+  {
+    placeId: 2,
+    name: "마포만두",
+    addressName: "서울 마포구 상암동",
+    groupName: "3Park1Kim",
+    placeType: "식당",
+    latitude: 37.5761986,
+    longitude: 126.90000479999999,
+  },
+  {
+    placeId: 1,
+    name: "뚜비집",
+    addressName: "경기도 고양시 덕양구",
+    groupName: "요기어때",
+    placeType: "우리집",
+    latitude: 37.4923615,
+    longitude: 127.02928809999999,
+  },
+  {
+    placeId: 2,
+    name: "마포만두",
+    addressName: "서울 마포구 상암동",
+    groupName: "3Park1Kim",
+    placeType: "식당",
+    latitude: 37.5761986,
+    longitude: 126.90000479999999,
+  },
+  {
+    placeId: 1,
+    name: "뚜비집",
+    addressName: "경기도 고양시 덕양구",
+    groupName: "요기어때",
+    placeType: "우리집",
+    latitude: 37.4923615,
+    longitude: 127.02928809999999,
+  },
+  {
+    placeId: 2,
+    name: "마포만두",
+    addressName: "서울 마포구 상암동",
+    groupName: "3Park1Kim",
+    placeType: "식당",
+    latitude: 37.5761986,
+    longitude: 126.90000479999999,
+  },
+  {
+    placeId: 1,
+    name: "뚜비집",
+    addressName: "경기도 고양시 덕양구",
+    groupName: "요기어때",
+    placeType: "우리집",
+    latitude: 37.4923615,
+    longitude: 127.02928809999999,
+  },
+  {
+    placeId: 2,
+    name: "마포만두",
+    addressName: "서울 마포구 상암동",
+    groupName: "3Park1Kim",
+    placeType: "식당",
+    latitude: 37.5761986,
+    longitude: 126.90000479999999,
+  },
+  {
+    placeId: 1,
+    name: "뚜비집",
+    addressName: "경기도 고양시 덕양구",
+    groupName: "요기어때",
+    placeType: "우리집",
+    latitude: 37.4923615,
+    longitude: 127.02928809999999,
+  },
+  {
+    placeId: 2,
+    name: "마포만두",
+    addressName: "서울 마포구 상암동",
+    groupName: "3Park1Kim",
+    placeType: "식당",
+    latitude: 37.5761986,
+    longitude: 126.90000479999999,
+  },
 ];
 
 const BaseLayout = () => {
@@ -52,7 +162,7 @@ const BaseLayout = () => {
 
   const [menu, changeMenu] = useState("/home");
   const [stroke, setStroke] = useState("#B5BBC2");
-
+  const { placeList } = useSelector((state: RootState) => state.place);
   const [openCreateMateModal, toggleCreateMateModal] = useState(false);
 
   const navigate = useNavigate();
@@ -155,7 +265,7 @@ const BaseLayout = () => {
       <div className="side">
         <div className="side-top">
           상단
-          <button onClick={() => changeMenu("/")}>홈</button>
+          <button onClick={() => changeMenu("/home")}>홈</button>
           <button onClick={() => changeMenu("/mate")}>메이트</button>
           <button onClick={() => changeMenu("/me")}>나</button>
           <SearchBar
@@ -167,7 +277,7 @@ const BaseLayout = () => {
           {menu === "/home" &&
             window.location.href.split("/").pop() === "home" && (
               <PlaceList
-                data={dummyPlaces}
+                data={placeList}
                 recentKeywords={recentKeywords}
                 setRecentKeywords={setRecentKeywords}
               />
@@ -207,7 +317,11 @@ const BaseLayout = () => {
                 </div>
               </>
             ) : (
-              "하이"
+              <PlaceList
+                data={placeList}
+                recentKeywords={recentKeywords}
+                setRecentKeywords={setRecentKeywords}
+              />
             ))}
         </div>
       </div>
@@ -216,7 +330,10 @@ const BaseLayout = () => {
           path={`${process.env.PUBLIC_URL}/home`}
           element={<Home data={dummyPlaces} />}
         />
-        <Route path={`${process.env.PUBLIC_URL}/mate/*`} element={<Mate />} />
+        <Route
+          path={`${process.env.PUBLIC_URL}/mate/*`}
+          element={<Mate data={dummyPlaces} />}
+        />
         <Route path={`${process.env.PUBLIC_URL}/me`} element={<div>Me</div>} />
         <Route path={`${process.env.PUBLIC_URL}/*`} element={<div>바디</div>} />
       </Routes>

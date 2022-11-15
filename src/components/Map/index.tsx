@@ -1,6 +1,9 @@
 import React, { useEffect, useRef } from "react";
 import styled from "@emotion/styled";
 import { Mark } from "../../types/MarkDto";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../modules/reducers";
+import { placeAction } from "../../modules/reducers/placeStore";
 
 const { kakao } = window;
 
@@ -20,22 +23,41 @@ const MapContainer = styled.div`
 `;
 
 interface Props {
-  data: Array<Mark>;
+  data?: Array<Mark>;
 }
-const Map: React.FC<Props> = ({ data }) => {
+const Map: React.FC<Props> = ({}) => {
+  const dispatch = useDispatch();
   const mapRef = useRef<HTMLDivElement>(null);
+  const { keyword } = useSelector((state: RootState) => state.place);
 
   useEffect(() => {
     const map = new kakao.maps.Map(mapRef.current, options);
+    // const infowindow = new kakao.maps.InfoWindow({ zIndex: 1 });
+    const ps = new kakao.maps.services.Places();
 
-    data.forEach((item) => {
-      let markerPosition = new kakao.maps.LatLng(item.latitude, item.longitude);
-      let marker = new kakao.maps.Marker({
-        position: markerPosition,
+    ps.keywordSearch(keyword, placesSearchCB);
+
+    function placesSearchCB(data: any, status: string) {
+      if (status === kakao.maps.services.Status.OK) {
+        dispatch(placeAction.setPlaceList(data));
+        let bounds = new kakao.maps.LatLngBounds();
+
+        for (let i = 0; i < data.length; i++) {
+          displayMarker(data[i]);
+          bounds.extend(new kakao.maps.LatLng(data[i].y, data[i].x));
+        }
+
+        map.setBounds(bounds);
+      }
+    }
+
+    function displayMarker(place: any) {
+      new kakao.maps.Marker({
+        map: map,
+        position: new kakao.maps.LatLng(place.y, place.x),
       });
-      marker.setMap(map);
-    });
-  }, [data]);
+    }
+  }, [keyword]);
 
   return <MapContainer id="map" ref={mapRef} />;
 };

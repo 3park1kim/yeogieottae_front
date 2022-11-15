@@ -1,12 +1,13 @@
-import { combineReducers } from "redux";
 import { useDispatch, useSelector } from "react-redux";
 import loginStore from "./loginStore";
+import place from "./placeStore";
 
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore, combineReducers } from "@reduxjs/toolkit";
 
 // 루트 리듀서
 const rootReducer = combineReducers({
   loginStore,
+  place,
 });
 
 // 루트 리듀서의 반환값를 유추
@@ -26,10 +27,11 @@ export function useRootState<T>(
 const store = configureStore({
   reducer: rootReducer,
 });
-//export default store;
+
+export default store;
 
 export type AppDispatch = typeof store.dispatch;
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export const useAppDispatch = () => useDispatch<AppDispatch>();
 
-export default rootReducer;
+// export default rootReducer;

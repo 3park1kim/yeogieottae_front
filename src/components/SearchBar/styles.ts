@@ -1,5 +1,4 @@
 import styled from "@emotion/styled";
-import DeleteIcon from "../../shared/Icons/DeleteIcon";
 
 export const SearchBarContainer = styled.div`
   position: relative;
@@ -41,6 +40,8 @@ export const KeywordDropdown = styled.div`
   padding-top: 16px;
   padding-bottom: 12px;
   min-height: 100px;
+  max-height: 300px;
+  overflow-y: auto;
   border-radius: 0 0 10px 10px;
   box-shadow: 0 1px 3px rgb(117 83 196 / 10%), 0 0 30px rgb(117 83 196 / 10%);
   background-color: #fff;

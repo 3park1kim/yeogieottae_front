@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from "react";
 import SearchIcon from "../../shared/Icons/SearchIcon";
 import { Mark } from "../../types/MarkDto";
+import { RootState } from "../../modules/reducers";
 import useComponentVisible from "../../modules/hooks/useComponentVisible";
 import {
   IconWrapper,
@@ -15,19 +16,23 @@ import {
 } from "./styles";
 import PinIcon from "../../shared/Icons/PinIcon";
 import DeleteIcon from "../../shared/Icons/DeleteIcon";
+import { useDispatch } from "react-redux";
+import { placeAction } from "../../modules/reducers/placeStore";
 
 interface iProps {
   recentKeywords: Array<Mark>;
   setRecentKeywords: (list: any) => void;
 }
 const SearchBar: React.FC<iProps> = ({ recentKeywords, setRecentKeywords }) => {
-  const [keyword, setKeyword] = useState<string>("");
+  const dispatch = useDispatch();
+  const [inputKeyword, setInputKeyword] = useState<string>("");
+
   const [dropdownRef, showRecentKeywords, setShowRecentKey] =
     useComponentVisible(false);
 
   const onChangeKeyword = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>): void => {
-      setKeyword(e.target.value);
+      setInputKeyword(e.target.value);
     },
     []
   );
@@ -40,10 +45,12 @@ const SearchBar: React.FC<iProps> = ({ recentKeywords, setRecentKeywords }) => {
         let list = [...recentKeywords];
         list = list.filter((i) => (!i.placeId && i.name) !== value);
         setRecentKeywords([{ name: value }, ...list]);
-        setKeyword("");
+        dispatch(placeAction.setKeyword(value));
+        setInputKeyword("");
+        setShowRecentKey(false);
       }
     },
-    [recentKeywords, setRecentKeywords]
+    [recentKeywords]
   );
 
   const onHandleClickDeleteBtn = useCallback(
@@ -72,7 +79,7 @@ const SearchBar: React.FC<iProps> = ({ recentKeywords, setRecentKeywords }) => {
           id="search_filter"
           className="search-input"
           placeholder={"검색어를 입력하세요."}
-          value={keyword}
+          value={inputKeyword}
           onChange={(e) => onChangeKeyword(e)}
           onKeyUp={(e) => onHandleKeyUp(e)}
           onClick={(e) => onHandleClickInput(e)}

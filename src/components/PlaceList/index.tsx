@@ -2,14 +2,19 @@ import styled from "@emotion/styled";
 import React, { useCallback } from "react";
 import { colors } from "../../shared/utils/theme";
 import { Mark } from "../../types/MarkDto";
+import { Place } from "../../types/PlaceDto";
 
 const PlaceListWrapper = styled.li`
   height: 100%;
   list-style: none;
+  overflow-y: auto;
 `;
 
 const PlaceItem = styled.ul`
-  padding: 5px 5px;
+  padding: 10px 20px;
+  margin: 0;
+  cursor: pointer;
+  border-bottom: 1px solid #f2f2f2;
 `;
 
 const PlaceTxtWrapper = styled.div`
@@ -35,8 +40,8 @@ const PlaceTxt = styled.p<{
 `;
 
 interface Props {
-  data: Array<Mark>;
-  recentKeywords: Array<Mark>;
+  data: Array<Place>;
+  recentKeywords: Array<Place>;
   setRecentKeywords: (list: any) => void;
 }
 
@@ -46,9 +51,9 @@ const PlaceList: React.FC<Props> = ({
   setRecentKeywords,
 }) => {
   const onHandleClickPlace = useCallback(
-    (item: Mark) => {
-      let list: Array<Mark> = [...recentKeywords];
-      list = list.filter((i) => i.placeId !== item.placeId);
+    (item: Place) => {
+      let list: Array<Place> = [...recentKeywords];
+      list = list.filter((i) => i.id !== item.id);
 
       setRecentKeywords([item, ...list]);
     },
@@ -57,19 +62,19 @@ const PlaceList: React.FC<Props> = ({
 
   return (
     <PlaceListWrapper>
-      {data.map((item: Mark, key: number) => (
+      {data.map((item: Place, key: number) => (
         <PlaceItem
           key={`place-item-${key}`}
           onClick={() => onHandleClickPlace(item)}
         >
           <PlaceTxtWrapper>
             <PlaceTxt fontWeight={700} fontColor={colors.blue4}>
-              {item.name}
+              {item.place_name}
             </PlaceTxt>
-            <PlaceTxt fontSize={"12px"}>{item.placeType}</PlaceTxt>
+            <PlaceTxt fontSize={"12px"}>{item.category_group_name}</PlaceTxt>
           </PlaceTxtWrapper>
-          <PlaceTxt fontSize={"14px"}>{item.groupName}</PlaceTxt>
-          <PlaceTxt fontSize={"14px"}>{item.addressName}</PlaceTxt>
+          <PlaceTxt fontSize={"14px"}>{item.category_name}</PlaceTxt>
+          <PlaceTxt fontSize={"14px"}>{item.address_name}</PlaceTxt>
         </PlaceItem>
       ))}
     </PlaceListWrapper>
