@@ -1,7 +1,6 @@
 import React, { useCallback, useState } from "react";
 import SearchIcon from "../../shared/Icons/SearchIcon";
 import { Mark } from "../../types/MarkDto";
-import { RootState } from "../../modules/reducers";
 import useComponentVisible from "../../modules/hooks/useComponentVisible";
 import {
   IconWrapper,
@@ -30,6 +29,29 @@ const SearchBar: React.FC<iProps> = ({ recentKeywords, setRecentKeywords }) => {
   const [dropdownRef, showRecentKeywords, setShowRecentKey] =
     useComponentVisible(false);
 
+  const onClickKeyword = useCallback(
+    (item: Mark) => (e: React.MouseEvent) => {
+      const { placeId, name } = item;
+
+      if (!placeId) {
+        searchKeyword(name);
+      }
+    },
+    []
+  );
+
+  const searchKeyword = useCallback(
+    (value: string): void => {
+      let list = [...recentKeywords];
+      list = list.filter((i) => (!i.placeId && i.name) !== value);
+      setRecentKeywords([{ name: value }, ...list]);
+      dispatch(placeAction.setKeyword(value));
+      setInputKeyword(value);
+      setShowRecentKey(false);
+    },
+    [recentKeywords]
+  );
+
   const onChangeKeyword = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>): void => {
       setInputKeyword(e.target.value);
@@ -41,20 +63,15 @@ const SearchBar: React.FC<iProps> = ({ recentKeywords, setRecentKeywords }) => {
     (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Enter") {
         const value = e.currentTarget.value;
-        if (!value) return;
-        let list = [...recentKeywords];
-        list = list.filter((i) => (!i.placeId && i.name) !== value);
-        setRecentKeywords([{ name: value }, ...list]);
-        dispatch(placeAction.setKeyword(value));
-        setInputKeyword("");
-        setShowRecentKey(false);
+        if (!value || value.length === 0) return;
+        searchKeyword(value);
       }
     },
-    [recentKeywords]
+    []
   );
 
   const onHandleClickDeleteBtn = useCallback(
-    (key: number) => {
+    (key: number) => () => {
       let list: Array<Mark> = [...recentKeywords];
       list.splice(key, 1);
       setRecentKeywords(list);
@@ -80,9 +97,9 @@ const SearchBar: React.FC<iProps> = ({ recentKeywords, setRecentKeywords }) => {
           className="search-input"
           placeholder={"검색어를 입력하세요."}
           value={inputKeyword}
-          onChange={(e) => onChangeKeyword(e)}
-          onKeyUp={(e) => onHandleKeyUp(e)}
-          onClick={(e) => onHandleClickInput(e)}
+          onChange={onChangeKeyword}
+          onKeyUp={onHandleKeyUp}
+          onClick={onHandleClickInput}
           autoComplete="off"
         />
       </SearchBarWrapper>
@@ -90,7 +107,10 @@ const SearchBar: React.FC<iProps> = ({ recentKeywords, setRecentKeywords }) => {
         <KeywordsDropdownWrapper ref={dropdownRef}>
           <KeywordDropdown>
             {recentKeywords.map((item: Mark, key: number) => (
-              <KeywordItem key={`keyword-item-${key}`}>
+              <KeywordItem
+                key={`keyword-item-${key}`}
+                onClick={onClickKeyword(item)}
+              >
                 <IconWrapper marginRight={"10px"}>
                   {item?.placeId ? (
                     <PinIcon width={18} height={18} stroke={"gray"} />
@@ -99,7 +119,7 @@ const SearchBar: React.FC<iProps> = ({ recentKeywords, setRecentKeywords }) => {
                   )}
                 </IconWrapper>
                 <KeywordTxt>{item.name}</KeywordTxt>
-                <IconWrapper onClick={() => onHandleClickDeleteBtn(key)}>
+                <IconWrapper onClick={onHandleClickDeleteBtn(key)}>
                   <DeleteIcon width={18} height={18} stroke={"gray"} />
                 </IconWrapper>
               </KeywordItem>
