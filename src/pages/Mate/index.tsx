@@ -33,7 +33,6 @@ const Mate: React.FC = () => {
         <Filter>음식점</Filter>
         <Filter>카페</Filter>
       </FilterGroup>
-      {token && <Picker />}
 
       <Map latitude={33} longitude={130} />
     </Base>

@@ -6,15 +6,50 @@ import "./index.scss";
 import Modal from "react-modal";
 import { GithubPicker } from "react-color";
 import qs from "qs";
+import Picker from "../../components/Picker";
 const { Kakao } = window;
 
 const dummyDetail = [
-  { id: 1, title: "연남동", desc: "", color: "red", places: [], member: [] },
+  {
+    id: 1,
+    title: "3park 1kim",
+    desc: "",
+    color: "#F6705E",
+    places: [
+      {
+        id: "abc",
+        x: 123,
+        y: 234,
+        name: "파수",
+      },
+      {
+        id: "def",
+        x: 313,
+        y: 534,
+        name: "당고당",
+      },
+      {
+        id: "def",
+        x: 313,
+        y: 534,
+        name: "당고당",
+      },
+    ],
+    member: [],
+  },
   {
     id: 2,
-    title: "상암동 맛집",
+    title: "파수동기 2022",
     desc: "",
-    color: "blue",
+    color: "#ffe3e7",
+    places: [],
+    member: [],
+  },
+  {
+    id: 3,
+    title: "배고픈 사람들",
+    desc: "",
+    color: "#e5be00 ",
     places: [],
     member: [],
   },
@@ -26,7 +61,7 @@ const BaseLayout = () => {
 
   const [menu, changeMenu] = useState("home");
   const [stroke, setStroke] = useState("#B5BBC2");
-
+  const [openPicker, toggleOpenPicker] = useState(false);
   const [openCreateMateModal, toggleCreateMateModal] = useState(false);
 
   const navigate = useNavigate();
@@ -63,7 +98,12 @@ const BaseLayout = () => {
       console.error(err);
     }
   };
-
+  useEffect(() => {
+    let pickerDoc = document.getElementById("picker");
+    pickerDoc?.addEventListener("close", function (e) {
+      toggleOpenPicker(false);
+    });
+  }, []);
   return (
     <div className="layout">
       {openCreateMateModal && (
@@ -113,7 +153,33 @@ const BaseLayout = () => {
             </div>
             <div className="createMateModal-box">
               <span className="name">멤버 추가</span>
-              <input className="input" type={"button"} title={"새 멤버 선택"} />
+              <input
+                className="input"
+                type={"button"}
+                title={"새 멤버 선택"}
+                onClick={() =>
+                  Kakao.Link.sendDefault({
+                    objectType: "feed",
+                    content: {
+                      title: "Yeogieottae Company", // 제목
+                      description: "당신을 요긴오때으로 초대합니다.",
+                      imageUrl:
+                        "https://storage.googleapis.com/jjalbot/2018/12/yilm9F5nv/zzal.jpg",
+                      link: {
+                        webUrl: "127.0.0.1/3000",
+                      },
+                    },
+                    buttons: [
+                      {
+                        title: "환영",
+                        link: {
+                          webUrl: "127.0.0.1/3000",
+                        },
+                      },
+                    ],
+                  })
+                }
+              />
             </div>
           </div>
           <div className="modal-footer">
@@ -146,9 +212,30 @@ const BaseLayout = () => {
                     />
                     <div>
                       <div className="mate-sidemenu--name">{item.title}</div>
-                      <div>{item.places.length}개</div>
+                      <div className="mate-sidemenu--btns">
+                        <span
+                          onClick={(e) => (
+                            e.stopPropagation(), toggleCreateMateModal(true)
+                          )}
+                        >
+                          자세히
+                        </span>
+                        <span
+                          onClick={(e) => (
+                            e.stopPropagation(), toggleCreateMateModal(true)
+                          )}
+                        >
+                          수정
+                        </span>
+                        <span
+                          onClick={(e) => (
+                            e.stopPropagation(), toggleCreateMateModal(true)
+                          )}
+                        >
+                          삭제
+                        </span>
+                      </div>
                     </div>
-                    <button className="mate-sidemenu--button"></button>
                   </div>
                 ))}
                 <div

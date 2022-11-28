@@ -20,22 +20,48 @@ const PickerContainer = styled.div`
 
 const Picker: React.FC<PickerProps> = ({}) => {
   useEffect(() => {
-    Kakao.Picker.cleanup();
-    Kakao.Picker.selectFriends({
-      title: "친구 선택",
-      showMyProfile: true,
-      maxPickableCount: 10,
-      minPickableCount: 1,
-      success: function (response: any) {
-        console.log(response);
+    Kakao.Link.sendDefault({
+      objectType: "feed",
+      content: {
+        title: "Yeogieottae Company", // 제목
+        description: "당신을 요긴오때으로 초대합니다.",
+        imageUrl:
+          "https://storage.googleapis.com/jjalbot/2018/12/yilm9F5nv/zzal.jpg",
+        link: {
+          webUrl: "127.0.0.1/3000",
+        },
       },
-      fail: function (error: any) {
-        console.log(error);
-      },
+      buttons: [
+        {
+          title: "환영",
+          link: {
+            webUrl: "127.0.0.1/3000",
+          },
+        },
+      ],
     });
   }, []);
 
-  return <PickerContainer id="picker" />;
+  return Kakao.Link.sendDefault({
+    objectType: "feed",
+    content: {
+      title: "Yeogieottae Company", // 제목
+      description: "당신을 요긴오때으로 초대합니다.",
+      imageUrl:
+        "https://storage.googleapis.com/jjalbot/2018/12/yilm9F5nv/zzal.jpg",
+      link: {
+        webUrl: "127.0.0.1/3000",
+      },
+    },
+    buttons: [
+      {
+        title: "환영",
+        link: {
+          webUrl: "127.0.0.1/3000",
+        },
+      },
+    ],
+  });
 };
 
 export default Picker;
