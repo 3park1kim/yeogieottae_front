@@ -3,6 +3,7 @@ import styled from "@emotion/styled";
 import Map from "../../components/Map";
 import Picker from "../../components/Picker";
 import { useNavigate } from "react-router-dom";
+import { Mark } from "../../types/MarkDto";
 const { kakao } = window;
 
 const Base = styled.div`
@@ -23,7 +24,11 @@ const Filter = styled.div`
   background-color: white;
   cursor: pointer;
 `;
-const Mate: React.FC = () => {
+interface Props {
+  data: Array<Mark>;
+}
+
+const Mate: React.FC<Props> = ({ data }) => {
   var token = window.localStorage.getItem("token");
   const navigate = useNavigate();
 
@@ -34,7 +39,7 @@ const Mate: React.FC = () => {
         <Filter>카페</Filter>
       </FilterGroup>
 
-      <Map latitude={33} longitude={130} />
+      <Map data={data} />
     </Base>
   );
 };
