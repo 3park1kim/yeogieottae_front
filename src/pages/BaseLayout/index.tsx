@@ -8,12 +8,13 @@ import { LOCAL_STORAGE_RECENT_SEARCH } from "../../shared/utils/storageKey";
 import Home from "../Home";
 import Mate from "../Mate";
 import "./index.scss";
-import Modal from "react-modal";
-import { GithubPicker } from "react-color";
 import qs from "qs";
-import Picker from "../../components/Picker";
+import styled from "@emotion/styled";
 import { useSelector } from "react-redux";
 import { RootState } from "../../modules/reducers";
+import BackIcon from "../../shared/Icons/BackIcon";
+import CreateOrDetailModal from "../Mate/CreateOrDetailModal";
+import { MateType } from "../../types/Mate";
 const { Kakao } = window;
 
 const dummyDetail = [
@@ -25,21 +26,21 @@ const dummyDetail = [
     places: [
       {
         id: "abc",
-        x: 123,
-        y: 234,
-        name: "파수",
+        x: "123",
+        y: "234",
+        place_name: "파수",
       },
       {
         id: "def",
-        x: 313,
-        y: 534,
-        name: "당고당",
+        x: "313",
+        y: "534",
+        place_name: "당고당",
       },
       {
         id: "def",
-        x: 313,
-        y: 534,
-        name: "당고당",
+        x: "313",
+        y: "534",
+        place_name: "당고당234",
       },
     ],
     member: [],
@@ -60,7 +61,7 @@ const dummyDetail = [
     places: [],
     member: [],
   },
-];
+] as MateType[];
 
 const dummyPlaces = [
   {
@@ -190,7 +191,16 @@ const dummyPlaces = [
     longitude: 126.90000479999999,
   },
 ];
-
+const Box = styled.div`
+  display: flex;
+  align-items: center;
+  margin: 20px 10px;
+  font-weight: 700;
+  font-size: 20px;
+  > * + * {
+    margin-left: 10px;
+  }
+`;
 const BaseLayout = () => {
   const plusIcon = require("../../shared/Icons/Plus.jpg");
   const XIcon = require("../../shared/Icons/X.png");
@@ -199,8 +209,8 @@ const BaseLayout = () => {
   const [stroke, setStroke] = useState("#B5BBC2");
   const [openPicker, toggleOpenPicker] = useState(false);
   const { placeList } = useSelector((state: RootState) => state.place);
-  const [openCreateMateModal, toggleCreateMateModal] = useState(false);
-
+  const [openCreateMateModal, toggleCreateMateModal] = useState("");
+  const [focusedMate, changeFocusedMate] = useState<MateType>({} as MateType);
   const navigate = useNavigate();
   const [recentKeywords, setRecentKeywords] = useLocalStorage(
     LOCAL_STORAGE_RECENT_SEARCH,
@@ -230,8 +240,8 @@ const BaseLayout = () => {
           code: code,
         }),
       })
-        .then((res) => res.json())
-        .then((data) => {
+        .then(res => res.json())
+        .then(data => {
           Kakao.Auth.setAccessToken(data.access_token);
           window.localStorage.setItem("token", data.access_token);
         });
@@ -248,86 +258,11 @@ const BaseLayout = () => {
   return (
     <div className="layout">
       {openCreateMateModal && (
-        <Modal isOpen={openCreateMateModal} className={"modal"}>
-          <div className="modal-header">
-            <span className="modal-title">새 메이트 추가</span>
-            <img
-              src={XIcon}
-              style={{ width: "25px", height: "25px" }}
-              onClick={() => toggleCreateMateModal(false)}
-              alt={"x"}
-            />
-          </div>
-          <div className="modal-body createMateModal">
-            <div className="createMateModal-box">
-              <span className="name">이름</span>
-              <input className="input" placeholder="이름을 적어주세요" />
-            </div>
-            <div className="createMateModal-box">
-              <span className="name">설명</span>
-              <input className="input long" placeholder="설명을 적어주세요." />
-            </div>
-            <div className="createMateModal-box">
-              <span className="name">색</span>
-              <HeartIcon width={20} height={20} stroke={stroke} />
-              <GithubPicker
-                width={"200px"}
-                colors={[
-                  "#25C16F",
-                  "#F6705E",
-                  "#8D65FC",
-                  "#27dbd8",
-                  "#4c86f4",
-                  "#e5be00",
-                  "#7dad31",
-                  "#FEF3BD",
-                  "#ffe3e7",
-                  "#fff0dc",
-                  "#252d38",
-                  "#717985",
-                  "#b5bbc2",
-                  "#d1d6db",
-                ]}
-                triangle={"hide"}
-                onChange={(e) => setStroke(e.hex)}
-              />
-            </div>
-            <div className="createMateModal-box">
-              <span className="name">멤버 추가</span>
-              <input
-                className="input"
-                type={"button"}
-                title={"새 멤버 선택"}
-                onClick={() =>
-                  Kakao.Link.sendDefault({
-                    objectType: "feed",
-                    content: {
-                      title: "Yeogieottae Company", // 제목
-                      description: "당신을 요긴오때으로 초대합니다.",
-                      imageUrl:
-                        "https://storage.googleapis.com/jjalbot/2018/12/yilm9F5nv/zzal.jpg",
-                      link: {
-                        webUrl: "127.0.0.1/3000",
-                      },
-                    },
-                    buttons: [
-                      {
-                        title: "환영",
-                        link: {
-                          webUrl: "127.0.0.1/3000",
-                        },
-                      },
-                    ],
-                  })
-                }
-              />
-            </div>
-          </div>
-          <div className="modal-footer">
-            <button>취소</button>
-            <button>확인</button>
-          </div>
-        </Modal>
+        <CreateOrDetailModal
+          open={openCreateMateModal !== ""}
+          type={openCreateMateModal}
+          onClose={() => toggleCreateMateModal("")}
+        />
       )}
       <div className="side">
         <div className="side-top">
@@ -352,11 +287,10 @@ const BaseLayout = () => {
           {menu === "/mate" &&
             (window.location.href.split("/").pop() === "mate" ? (
               <>
-                {dummyDetail.map((item) => (
+                {dummyDetail.map(item => (
                   <div
                     className="mate-sidemenu"
-                    onClick={() => navigate(`/mate/${item.id}`)}
-                  >
+                    onClick={() => navigate(`/mate/${item.id}`)}>
                     <HeartIcon
                       width={20}
                       height={20}
@@ -367,25 +301,18 @@ const BaseLayout = () => {
                       <div className="mate-sidemenu--name">{item.title}</div>
                       <div className="mate-sidemenu--btns">
                         <span
-                          onClick={(e) => (
-                            e.stopPropagation(), toggleCreateMateModal(true)
-                          )}
-                        >
+                          onClick={e => (
+                            e.stopPropagation(), toggleCreateMateModal("detail")
+                          )}>
                           자세히
                         </span>
                         <span
-                          onClick={(e) => (
-                            e.stopPropagation(), toggleCreateMateModal(true)
-                          )}
-                        >
+                          onClick={e => (
+                            e.stopPropagation(),
+                            toggleCreateMateModal("edit"),
+                            changeFocusedMate(item)
+                          )}>
                           수정
-                        </span>
-                        <span
-                          onClick={(e) => (
-                            e.stopPropagation(), toggleCreateMateModal(true)
-                          )}
-                        >
-                          삭제
                         </span>
                       </div>
                     </div>
@@ -393,8 +320,7 @@ const BaseLayout = () => {
                 ))}
                 <div
                   className="mate-sidemenu"
-                  onClick={() => toggleCreateMateModal(true)}
-                >
+                  onClick={() => toggleCreateMateModal("create")}>
                   <img
                     src={plusIcon}
                     className="mate-sidemenu--heart"
@@ -405,11 +331,19 @@ const BaseLayout = () => {
                 </div>
               </>
             ) : (
-              <PlaceList
-                data={placeList}
-                recentKeywords={recentKeywords}
-                setRecentKeywords={setRecentKeywords}
-              />
+              <div>
+                <Box>
+                  <span onClick={() => navigate("/mate")}>
+                    <BackIcon />
+                  </span>
+                  <span>3Park 1Kim</span>
+                </Box>
+                <PlaceList
+                  data={placeList}
+                  recentKeywords={recentKeywords}
+                  setRecentKeywords={setRecentKeywords}
+                />
+              </div>
             ))}
         </div>
       </div>
